@@ -90,7 +90,7 @@ public class AccountService {
         accountRepository.save(toAccount);
     }
 
-    @Scheduled(fixedRate = 60 * 60 * 1_000)
+    @Scheduled(fixedRate = 5 * 60 * 1000) // Runs every 5 minutes
     protected void inactivateAccounts() {
         LocalDateTime cutoffDate = LocalDateTime.now().minusDays(1);
         accountRepository.updateAccountsStatus(cutoffDate);

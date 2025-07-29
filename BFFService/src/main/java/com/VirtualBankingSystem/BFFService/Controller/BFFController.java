@@ -1,15 +1,13 @@
 package com.VirtualBankingSystem.BFFService.Controller;
 
-import com.VirtualBankingSystem.BFFService.DTO.UserResponseDTO;
+import com.VirtualBankingSystem.BFFService.DTO.*;
 import com.VirtualBankingSystem.BFFService.Service.BFFService;
-// Removed unused import for @NotBlank
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
 
@@ -23,5 +21,17 @@ public class BFFController {
     @RequestMapping("/dashboard/{userId}")
     public ResponseEntity<UserResponseDTO> getDashBoard(@NotNull @PathVariable(value = "userId") UUID userId){
         return ResponseEntity.ok(bffService.getUserData(userId));
+    }
+    
+    @PostMapping("/transactions/transfer/initiation")
+    public ResponseEntity<TransferInitiationResponseDTO> initiateTransfer(
+            @Valid @RequestBody TransferInitiationRequestDTO request) {
+        return ResponseEntity.ok(bffService.initiateTransfer(request));
+    }
+    
+    @PostMapping("/transactions/transfer/execution")
+    public ResponseEntity<TransferExecutionResponseDTO> executeTransfer(
+            @Valid @RequestBody TransferExecutionRequestDTO request) {
+        return ResponseEntity.ok(bffService.executeTransfer(request));
     }
 }
