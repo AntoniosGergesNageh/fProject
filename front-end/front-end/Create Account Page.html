@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Create New Account</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #e4ecf9, #f8faff);
+      margin: 0;
+      padding: 20px;
+      color: #000;
+    }
+
+    .container {
+      max-width: 520px;
+      margin: auto;
+      background: #ffffffdd;
+      backdrop-filter: blur(8px);
+      border-radius: 16px;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.1);
+      padding: 30px;
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+
+    label {
+      display: block;
+      margin-top: 16px;
+      font-weight: 600;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 10px;
+      margin-top: 6px;
+      border-radius: 10px;
+      border: 1px solid #ccc;
+      font-size: 1rem;
+      transition: border-color 0.3s;
+    }
+
+    input:focus, select:focus {
+      outline: none;
+      border-color: #2d89f0;
+      box-shadow: 0 0 0 2px rgba(45,137,240,0.2);
+    }
+
+    .btn {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(to right, #2d89f0, #1e5ddc);
+      color: white;
+      border: none;
+      margin-top: 24px;
+      border-radius: 12px;
+      font-weight: bold;
+      cursor: pointer;
+      font-size: 1rem;
+      box-shadow: 0 4px 12px rgba(45,137,240,0.3);
+      transition: background 0.3s ease, transform 0.2s ease;
+    }
+
+    .btn:hover {
+      background: linear-gradient(to right, #1e5ddc, #2d89f0);
+      transform: scale(1.02);
+    }
+
+    .message {
+      text-align: center;
+      margin-top: 18px;
+      font-weight: bold;
+    }
+
+    .error { color: red; }
+    .success { color: green; }
+
+    .top-controls {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+
+    .top-controls button {
+      background-color: #2d89f0;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 10px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.3s ease, transform 0.2s ease;
+    }
+
+    .top-controls button:hover {
+      background-color: #1a6cd0;
+      transform: scale(1.05);
+    }
+
+    body.dark-mode {
+      background-color: #121212;
+      color: #e0e0e0;
+    }
+
+    body.dark-mode .container {
+      background-color: #1e1e1e;
+    }
+
+    body.dark-mode input,
+    body.dark-mode select {
+      background-color: #2c2c2c;
+      color: #e0e0e0;
+      border-color: #444;
+    }
+  </style>
+
+<body>
+  <div class="container">
+    <div class="top-controls">
+      <button onclick="toggleLanguage()" id="langToggle">AR</button>
+      <button onclick="window.location.href='Ejada Empty Accounts.html'">Return to Dashboard</button>
+    </div>
+    <h2 id="formTitle">Create New Account</h2>
+    <form id="accountForm">
+      <label for="fullname" id="labelName">Full Name</label>
+      <input type="text" id="fullname" required>
+
+      <label for="email" id="labelEmail">Email Address</label>
+      <input type="email" id="email" required>
+
+      <label for="phone" id="labelPhone">Phone Number</label>
+      <input type="text" id="phone" required>
+
+      <label for="type" id="labelType">Account Type</label>
+      <select id="type" required>
+        <option value="">-- Select --</option>
+        <option value="savings">Savings</option>
+        <option value="checking">Checking</option>
+      </select>
+
+      <label for="amount" id="labelAmount">Initial Deposit ($)</label>
+      <input type="number" id="amount" required>
+
+      <button type="submit" class="btn" id="submitBtn">Submit</button>
+      <div id="message" class="message"></div>
+    </form>
+  </div>
+
+  <script>
+    const form = document.getElementById('accountForm');
+    const message = document.getElementById('message');
+
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      const fullName = document.getElementById('fullname').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const phone = document.getElementById('phone').value.trim();
+      const amount = parseFloat(document.getElementById('amount').value);
+      const type = document.getElementById('type').value;
+
+      if (!fullName || !email || !phone || !type || isNaN(amount) || amount <= 0) {
+        message.textContent = currentLang === 'en' ? 'Please fill out all fields correctly.' : 'يرجى ملء جميع الحقول بشكل صحيح';
+        message.className = 'message error';
+        return;
+      }
+
+      message.textContent = currentLang === 'en' ? 'Account created successfully!' : 'تم إنشاء الحساب بنجاح!';
+      message.className = 'message success';
+    });
+
+    const toggle = document.getElementById('toggleDarkMode');
+    const isDark = localStorage.getItem('darkMode') === 'true';
+    if (isDark) document.body.classList.add('dark-mode');
+    if (toggle) {
+      toggle.checked = isDark;
+      toggle.addEventListener('change', function () {
+        document.body.classList.toggle('dark-mode', this.checked);
+        localStorage.setItem('darkMode', this.checked);
+      });
+    }
+
+    let currentLang = localStorage.getItem('lang') || 'en';
+    function applyLanguage() {
+      document.getElementById('formTitle').textContent = currentLang === 'en' ? 'Create New Account' : 'إنشاء حساب جديد';
+      document.getElementById('labelName').textContent = currentLang === 'en' ? 'Full Name' : 'الاسم الكامل';
+      document.getElementById('labelEmail').textContent = currentLang === 'en' ? 'Email Address' : 'البريد الإلكتروني';
+      document.getElementById('labelPhone').textContent = currentLang === 'en' ? 'Phone Number' : 'رقم الهاتف';
+      document.getElementById('labelType').textContent = currentLang === 'en' ? 'Account Type' : 'نوع الحساب';
+      document.getElementById('labelAmount').textContent = currentLang === 'en' ? 'Initial Deposit ($)' : 'الإيداع الابتدائي ($)';
+      document.getElementById('submitBtn').textContent = currentLang === 'en' ? 'Submit' : 'إرسال';
+      document.getElementById('langToggle').textContent = currentLang === 'en' ? 'AR' : 'EN';
+      document.documentElement.lang = currentLang;
+    }
+    function toggleLanguage() {
+      currentLang = currentLang === 'en' ? 'ar' : 'en';
+      localStorage.setItem('lang', currentLang);
+      applyLanguage();
+    }
+    applyLanguage();
+  </script>
+</body>
+</html>

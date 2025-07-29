@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ejada - Transfer Money</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(to bottom right, #e3ebf9, #f8fafd);
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 100vh;
+      color: #000;
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 420px;
+      margin-top: 50px;
+      background: #ffffffcc;
+      backdrop-filter: blur(8px);
+      padding: 30px 24px;
+      border-radius: 16px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+      position: relative;
+    }
+
+    .form-section {
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 6px;
+      color: #333;
+    }
+
+    .hint {
+      font-size: 0.85rem;
+      color: #666;
+      margin-top: 2px;
+      margin-bottom: 12px;
+    }
+
+    select,
+    input[type="text"],
+    input[type="number"] {
+      width: 100%;
+      padding: 10px;
+      font-size: 1rem;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      background-color: white;
+      transition: border-color 0.3s;
+    }
+
+    select:focus,
+    input:focus {
+      outline: none;
+      border-color: #2d89f0;
+      box-shadow: 0 0 0 2px rgba(45,137,240,0.2);
+    }
+
+    .btn-submit {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(to right, #2d89f0, #1e5ddc);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-size: 1rem;
+      cursor: pointer;
+      font-weight: bold;
+      box-shadow: 0 4px 10px rgba(45,137,240,0.3);
+      transition: background 0.3s ease, transform 0.2s ease;
+    }
+
+    .btn-submit:hover {
+      background: linear-gradient(to right, #1e5ddc, #2d89f0);
+      transform: scale(1.02);
+    }
+
+    .error {
+      color: red;
+      font-size: 0.9rem;
+      margin-top: 10px;
+      text-align: center;
+    }
+
+    .nav-buttons {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .lang-label, .back-btn {
+      font-size: 0.85rem;
+      font-weight: bold;
+      cursor: pointer;
+      background-color: #2d89f0;
+      color: white;
+      border: none;
+      border-radius: 18px;
+      padding: 6px 14px;
+      height: 34px;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: background-color 0.3s ease, transform 0.2s ease;
+    }
+
+    .lang-label:hover, .back-btn:hover {
+      background-color: #1e5ddc;
+      transform: scale(1.05);
+    }
+
+    body.dark-mode {
+      background-color: #121212;
+      color: #e0e0e0;
+    }
+
+    body.dark-mode .container {
+      background-color: #1e1e1e;
+    }
+
+    body.dark-mode input,
+    body.dark-mode select,
+    body.dark-mode textarea {
+      background-color: #2c2c2c;
+      color: #e0e0e0;
+      border-color: #444;
+    }
+
+    body.dark-mode button {
+      background-color: #2d89f0;
+      color: white;
+    }
+  </style>
+
+<body>
+  <div class="container">
+    <div class="nav-buttons">
+      <button onclick="toggleLanguage()" id="langToggle" class="lang-label">AR</button>
+      <a href="Ejada Empty Accounts.html" class="back-btn">Return to Dashboard</a>
+    </div>
+    <form id="transferForm">
+      <div class="form-section">
+        <label for="from-account" id="labelFrom">From Account</label>
+        <select id="from-account">
+          <option value="Savings">Savings Account</option>
+          <option value="Checking">Checking Account</option>
+        </select>
+        <div class="hint" id="hintFrom">Select account to transfer from.</div>
+      </div>
+
+      <div class="form-section">
+        <label for="to-id" id="labelTo">To Account ID</label>
+        <input type="text" id="to-id" placeholder="Enter recipient’s account ID">
+        <div class="hint" id="hintTo">Enter a valid account ID for transfer.</div>
+      </div>
+
+      <div class="form-section">
+        <label for="amount" id="labelAmount">Amount</label>
+        <input type="number" id="amount" placeholder="138">
+        <div class="hint" id="hintAmount">Enter the amount to transfer.</div>
+      </div>
+
+      <div class="form-section">
+        <label for="description" id="labelDesc">Optional Description</label>
+        <input type="text" id="description" placeholder="Enter description (optional)">
+        <div class="hint" id="hintDesc">Add a note for the transaction.</div>
+      </div>
+
+      <button class="btn-submit" type="submit" id="submitBtn">Initiate Transfer</button>
+      <div class="error" id="error-msg" style="display: none;">Please fill in all required fields correctly.</div>
+    </form>
+  </div>
+
+  <script>
+    const form = document.getElementById('transferForm');
+    const errorMsg = document.getElementById('error-msg');
+
+    form.addEventListener('submit', function(event) {
+      event.preventDefault();
+
+      const toId = document.getElementById('to-id').value.trim();
+      const amount = parseFloat(document.getElementById('amount').value.trim());
+
+      if (toId !== '' && !isNaN(amount) && amount > 0) {
+        window.location.href = 'Transfer Confirmation Page.html';
+      } else {
+        errorMsg.style.display = 'block';
+      }
+    });
+
+    const translations = {
+      en: {
+        labelFrom: 'From Account',
+        hintFrom: 'Select account to transfer from.',
+        labelTo: 'To Account ID',
+        hintTo: 'Enter a valid account ID for transfer.',
+        labelAmount: 'Amount',
+        hintAmount: 'Enter the amount to transfer.',
+        labelDesc: 'Optional Description',
+        hintDesc: 'Add a note for the transaction.',
+        submitBtn: 'Initiate Transfer',
+        errorMsg: 'Please fill in all required fields correctly.',
+        langLabel: 'AR'
+      },
+      ar: {
+        labelFrom: 'من الحساب',
+        hintFrom: 'اختر الحساب الذي سيتم التحويل منه.',
+        labelTo: 'معرّف حساب المستلم',
+        hintTo: 'أدخل معرف حساب صالح للتحويل.',
+        labelAmount: 'المبلغ',
+        hintAmount: 'أدخل المبلغ المراد تحويله.',
+        labelDesc: 'وصف اختياري',
+        hintDesc: 'أضف ملاحظة للمعاملة.',
+        submitBtn: 'تنفيذ التحويل',
+        errorMsg: 'يرجى ملء جميع الحقول المطلوبة بشكل صحيح.',
+        langLabel: 'EN'
+      }
+    };
+
+    let currentLang = localStorage.getItem('lang') || 'en';
+    applyLanguage();
+
+    function toggleLanguage() {
+      currentLang = currentLang === 'en' ? 'ar' : 'en';
+      localStorage.setItem('lang', currentLang);
+      applyLanguage();
+    }
+
+    function applyLanguage() {
+      const t = translations[currentLang];
+      document.getElementById('labelFrom').textContent = t.labelFrom;
+      document.getElementById('hintFrom').textContent = t.hintFrom;
+      document.getElementById('labelTo').textContent = t.labelTo;
+      document.getElementById('hintTo').textContent = t.hintTo;
+      document.getElementById('labelAmount').textContent = t.labelAmount;
+      document.getElementById('hintAmount').textContent = t.hintAmount;
+      document.getElementById('labelDesc').textContent = t.labelDesc;
+      document.getElementById('hintDesc').textContent = t.hintDesc;
+      document.getElementById('submitBtn').textContent = t.submitBtn;
+      document.getElementById('error-msg').textContent = t.errorMsg;
+      document.getElementById('langToggle').textContent = t.langLabel;
+      document.documentElement.lang = currentLang;
+      document.documentElement.dir = currentLang === 'ar' ? 'rtl' : 'ltr';
+    }
+  </script>
+</body>
+</html>

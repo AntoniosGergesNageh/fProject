@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Transfer Result</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f0f4ff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+    }
+
+    .card {
+      background-color: white;
+      border-radius: 12px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+      padding: 30px;
+      text-align: center;
+      max-width: 400px;
+      width: 90%;
+      margin-bottom: 20px;
+    }
+
+    .card h2 {
+      margin-bottom: 10px;
+    }
+
+    .card p {
+      margin: 6px 0;
+      font-size: 1rem;
+    }
+
+    hr {
+      margin: 20px 0;
+      border: none;
+      border-top: 1px solid #ccc;
+    }
+
+    .btn {
+      padding: 12px 20px;
+      background-color: #2196f3;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: bold;
+      text-decoration: none;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .btn:hover {
+      background-color: #1976d2;
+    }
+  </style>
+  <style>
+  body {
+    background-color: #fff;
+    color: #000;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+
+  body.dark-mode {
+    background-color: #121212;
+    color: #e0e0e0;
+  }
+
+  .container, input, select, textarea, button {
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+
+  body.dark-mode .container {
+    background-color: #1e1e1e;
+  }
+
+  body.dark-mode input,
+  body.dark-mode select,
+  body.dark-mode textarea {
+    background-color: #2c2c2c;
+    color: #e0e0e0;
+    border-color: #444;
+  }
+
+  body.dark-mode button {
+    background-color: #2d89f0;
+    color: white;
+  }
+</style>
+
+</head>
+<body>
+  <div class="card">
+    <h2>Transfer completed successfully!</h2>
+    <hr>
+    <p><strong>Amount:</strong> $500</p>
+    <p><strong>From Account:</strong> 12345678</p>
+    <p><strong>To Account:</strong> 87654321</p>
+  </div>
+  <a href="Ejada Empty Accounts.html" class="btn">Return to Dashboard</a>
+  <script>
+  const toggle = document.getElementById('toggleDarkMode');
+  const isDark = localStorage.getItem('darkMode') === 'true';
+
+  if (isDark) {
+    document.body.classList.add('dark-mode');
+  }
+
+  if (toggle) {
+    toggle.checked = isDark;
+    toggle.addEventListener('change', function () {
+      document.body.classList.toggle('dark-mode', this.checked);
+      localStorage.setItem('darkMode', this.checked);
+    });
+  } else {
+    if (isDark) {
+      document.body.classList.add('dark-mode');
+    }
+  }
+</script>
+
+</body>
+</html>

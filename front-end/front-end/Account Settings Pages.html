@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Settings - Ejada</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f4f7fe;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 100vh;
+      direction: ltr;
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    body.dark-mode {
+      background-color: #121212;
+      color: #e0e0e0;
+    }
+
+    .container {
+      max-width: 450px;
+      width: 100%;
+      padding: 30px 20px;
+      background-color: #ffffff;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      border-radius: 16px;
+      margin-top: 50px;
+      transition: background-color 0.3s ease;
+    }
+
+    body.dark-mode .container {
+      background-color: #1e1e1e;
+    }
+
+    h2 {
+      margin-bottom: 20px;
+      text-align: center;
+      color: #333;
+    }
+
+    body.dark-mode h2 {
+      color: #e0e0e0;
+    }
+
+    .setting-item {
+      margin-bottom: 20px;
+    }
+
+    label {
+      font-weight: 600;
+      display: block;
+      margin-bottom: 6px;
+      color: #222;
+    }
+
+    body.dark-mode label {
+      color: #e0e0e0;
+    }
+
+    .setting-description {
+      font-size: 0.85rem;
+      color: #666;
+      margin-top: 4px;
+    }
+
+    body.dark-mode .setting-description {
+      color: #aaa;
+    }
+
+    .divider {
+      height: 1px;
+      background-color: #e0e0e0;
+      margin: 25px 0;
+    }
+
+    .btn {
+      background-color: #2d89f0;
+      color: #fff;
+      padding: 12px;
+      width: 100%;
+      border: none;
+      border-radius: 10px;
+      font-size: 1rem;
+      cursor: pointer;
+      margin-top: 10px;
+      transition: background-color 0.3s ease;
+    }
+
+    .btn:hover {
+      background-color: #1a6ed1;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2 data-en="Settings" data-ar="الإعدادات">Settings</h2>
+
+    <div class="setting-item">
+      <label><input type="checkbox" id="twoFactor"> <span data-en="Enable Two-Factor Authentication" data-ar="تفعيل المصادقة الثنائية">Enable Two-Factor Authentication</span></label>
+      <div class="setting-description" data-en="Add an extra layer of security to your account." data-ar="أضف طبقة أمان إضافية لحسابك.">Add an extra layer of security to your account.</div>
+    </div>
+
+    <div class="setting-item">
+      <label><input type="checkbox" id="emailAlerts"> <span data-en="Receive Transaction Alerts via Email" data-ar="استلام تنبيهات المعاملات عبر البريد الإلكتروني">Receive Transaction Alerts via Email</span></label>
+      <div class="setting-description" data-en="Get notified for every activity on your account." data-ar="احصل على إشعار بكل نشاط على حسابك.">Get notified for every activity on your account.</div>
+    </div>
+
+    <div class="setting-item">
+      <label><input type="checkbox" id="smsAlerts"> <span data-en="Receive Transaction Alerts via SMS" data-ar="استلام تنبيهات المعاملات عبر الرسائل النصية">Receive Transaction Alerts via SMS</span></label>
+      <div class="setting-description" data-en="SMS alerts may apply mobile carrier charges." data-ar="قد تنطبق رسوم شركة الاتصالات على التنبيهات عبر الرسائل النصية.">SMS alerts may apply mobile carrier charges.</div>
+    </div>
+
+    <div class="setting-item">
+      <label><input type="checkbox" id="loginNotify"> <span data-en="Enable Login Notifications" data-ar="تفعيل تنبيهات تسجيل الدخول">Enable Login Notifications</span></label>
+      <div class="setting-description" data-en="Receive an email when your account is accessed." data-ar="تلقى بريد إلكتروني عند دخول حسابك.">Receive an email when your account is accessed.</div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="setting-item">
+      <label><input type="checkbox" id="toggleDarkMode"> <span data-en="Enable Dark Mode" data-ar="تفعيل الوضع الليلي">Enable Dark Mode</span></label>
+    </div>
+
+    <div class="setting-item">
+      <label for="language" data-en="Language" data-ar="اللغة">Language</label>
+      <select id="language">
+        <option value="en">English</option>
+        <option value="ar">العربية</option>
+      </select>
+    </div>
+
+    <button class="btn" onclick="saveSettings()" data-en="Save Changes" data-ar="حفظ التغييرات">Save Changes</button>
+    <button class="btn" onclick="location.href='Ejada Empty Accounts.html'" data-en="Return to Dashboard" data-ar="العودة إلى الرئيسية">Return to Dashboard</button>
+  </div>
+
+  <script>
+    const settingsMap = {
+      darkMode: 'toggleDarkMode',
+      language: 'language',
+      twoFactor: 'twoFactor',
+      emailAlerts: 'emailAlerts',
+      smsAlerts: 'smsAlerts',
+      loginNotify: 'loginNotify'
+    };
+
+    window.onload = () => {
+      Object.entries(settingsMap).forEach(([key, id]) => {
+        const el = document.getElementById(id);
+        const stored = localStorage.getItem(key);
+        if (el.type === 'checkbox') {
+          el.checked = stored === 'true';
+          if (key === 'darkMode' && el.checked) {
+            document.body.classList.add('dark-mode');
+          }
+        } else if (el.tagName === 'SELECT' && stored) {
+          el.value = stored;
+        }
+      });
+
+      applyLanguage(localStorage.getItem('language') || 'en');
+
+      // Listen for live toggle dark mode
+      document.getElementById('toggleDarkMode').addEventListener('change', function () {
+        if (this.checked) {
+          document.body.classList.add('dark-mode');
+          localStorage.setItem('darkMode', 'true');
+        } else {
+          document.body.classList.remove('dark-mode');
+          localStorage.setItem('darkMode', 'false');
+        }
+      });
+    };
+
+    function saveSettings() {
+      Object.entries(settingsMap).forEach(([key, id]) => {
+        const el = document.getElementById(id);
+        if (el.type === 'checkbox') {
+          localStorage.setItem(key, el.checked);
+        } else if (el.tagName === 'SELECT') {
+          localStorage.setItem(key, el.value);
+        }
+      });
+
+      const lang = document.getElementById('language').value;
+      applyLanguage(lang);
+
+      alert(lang === 'ar' ? ' تم حفظ الإعدادات بنجاح.' : ' Settings saved successfully.');
+    }
+
+    document.getElementById('language').addEventListener('change', () => {
+      const lang = document.getElementById('language').value;
+      applyLanguage(lang);
+    });
+
+    function applyLanguage(lang) {
+      document.documentElement.lang = lang;
+      document.body.dir = lang === 'ar' ? 'rtl' : 'ltr';
+      document.querySelectorAll('[data-en][data-ar]').forEach(el => {
+        el.textContent = el.dataset[lang];
+      });
+    }
+  </script>
+</body>
+</html>

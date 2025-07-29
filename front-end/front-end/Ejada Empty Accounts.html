@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ejada - Dashboard</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(to bottom right, #e6ecf9, #f5f7fb);
+      margin: 0;
+      padding: 20px;
+      color: #000;
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .header h1 {
+      font-size: 1.8rem;
+    }
+
+    .header .profile-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      position: relative;
+    }
+
+    .header .icon {
+      background-color: #4d5dfb;
+      color: white;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .lang-label {
+      font-size: 0.9rem;
+      font-weight: bold;
+      cursor: pointer;
+      background-color: #2d89f0;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      padding: 5px 10px;
+      transition: background-color 0.3s ease, transform 0.2s ease;
+    }
+
+    .lang-label:hover {
+      background-color: #1b6fd9;
+      transform: scale(1.05);
+    }
+
+    .logout-btn {
+      font-size: 0.9rem;
+      font-weight: bold;
+      background-color: #f44336;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      padding: 6px 12px;
+      text-decoration: none;
+      margin-left: 10px;
+      transition: background-color 0.3s ease, transform 0.2s ease;
+    }
+
+    .logout-btn:hover {
+      background-color: #d32f2f;
+      transform: scale(1.04);
+    }
+
+    .profile-popup {
+      display: none;
+      position: absolute;
+      top: 50px;
+      right: 0;
+      background: #fff;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+      padding: 10px 15px;
+      width: 220px;
+      z-index: 100;
+    }
+
+    .profile-popup.show {
+      display: block;
+    }
+
+    .profile-popup .avatar {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background-color: #4d5dfb;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      color: white;
+      margin: 0 auto 10px auto;
+    }
+
+    .profile-popup p {
+      margin: 8px 0;
+      text-align: center;
+      font-size: 14px;
+      color: #000;
+    }
+
+    .card {
+      background: white;
+      border-radius: 12px;
+      padding: 16px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      margin: 20px 0;
+      transition: transform 0.4s ease, box-shadow 0.4s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 6px 16px rgba(0,0,0,0.12);
+    }
+
+    .card h3 {
+      margin-top: 0;
+    }
+
+    .transactions {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 0;
+      border-bottom: 1px solid #eee;
+    }
+
+    .transactions:last-child {
+      border-bottom: none;
+    }
+
+    .actions {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+      margin-top: 30px;
+    }
+
+    .action-btn {
+      display: block;
+      padding: 12px;
+      background-color: #2196f3;
+      color: white;
+      text-align: center;
+      border-radius: 8px;
+      font-weight: bold;
+      text-decoration: none;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      box-shadow: 0 3px 8px rgba(33, 150, 243, 0.2);
+    }
+
+    .action-btn:hover {
+      background-color: #1976d2;
+      transform: scale(1.04);
+      box-shadow: 0 6px 18px rgba(33, 150, 243, 0.35);
+    }
+
+    body.dark-mode {
+      background-color: #121212;
+      color: #e0e0e0;
+    }
+
+    .profile-popup p {
+      color: #000;
+    }
+
+    body.dark-mode .profile-popup p {
+      color: #fff;
+    }
+
+    .container, input, select, textarea, button {
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    body.dark-mode .container {
+      background-color: #1e1e1e;
+    }
+
+    body.dark-mode input,
+    body.dark-mode select,
+    body.dark-mode textarea {
+      background-color: #2c2c2c;
+      color: #e0e0e0;
+      border-color: #444;
+    }
+
+    body.dark-mode button {
+      background-color: #2d89f0;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+<!-- الباقي كما هو بدون تغيير -->
+
+<body>
+<!-- الباقي كما هو بدون تغيير -->
+
+<body>
+  <div class="header">
+    <h1 id="greeting">Hello, Okba 👋</h1>
+    <div class="profile-group">
+      <button onclick="toggleLanguage()" id="langToggle" class="lang-label">AR</button>
+      <a href="Ejada Login Page.html" class="logout-btn">Logout</a>
+      <div class="icon" onclick="toggleProfilePopup()">👤
+        <div id="profilePopup" class="profile-popup">
+          <div class="avatar">👤</div>
+          <p><strong>Okba Ben</strong></p>
+          <p>okba.ben@example.com</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3 id="accTitle">Primary Bank Account</h3>
+    <p><strong id="accNumLabel">Account Number:</strong> <span id="account-number">1234 5678 9012</span></p>
+    <p><strong id="accTypeLabel">Account Type:</strong> <span id="account-type">Checking</span></p>
+    <p><strong id="accBalLabel">Balance:</strong> <span id="account-balance">$5,432.21</span></p>
+  </div>
+
+  <div class="card">
+    <h3 id="latestTx">Latest Transactions</h3>
+    <div class="transactions">
+      <span>Groceries</span><span>$120.50</span><span>10/12/2023</span>
+    </div>
+    <div class="transactions">
+      <span>Gas Bill</span><span>$45.00</span><span>09/12/2023</span>
+    </div>
+    <div class="transactions">
+      <span>Rent</span><span>$850.00</span><span>05/12/2023</span>
+    </div>
+  </div>
+
+  <div class="actions">
+    <a href="Ejada Transfer Page.html" class="action-btn" id="btnTransfer">Transfer Money</a>
+    <a href="Account Details Page.html" class="action-btn" id="btnView">View Transactions</a>
+    <a href="Create Account Page.html" class="action-btn" id="btnCreate">Create New Account</a>
+    <a href="Account Settings Pages.html" class="action-btn" id="btnSettings">Settings</a>
+  </div>
+
+  <script>
+    const toggle = document.getElementById('toggleDarkMode');
+    const isDark = localStorage.getItem('darkMode') === 'true';
+    if (isDark) document.body.classList.add('dark-mode');
+    if (toggle) {
+      toggle.checked = isDark;
+      toggle.addEventListener('change', function () {
+        document.body.classList.toggle('dark-mode', this.checked);
+        localStorage.setItem('darkMode', this.checked);
+      });
+    }
+
+    let currentLang = localStorage.getItem('lang') || 'en';
+    function applyLanguage() {
+      document.getElementById('langToggle').textContent = currentLang === 'en' ? 'AR' : 'EN';
+      document.getElementById('greeting').textContent = currentLang === 'en' ? 'Hello, Okba 👋' : 'مرحباً، عقبة 👋';
+      document.getElementById('accTitle').textContent = currentLang === 'en' ? 'Primary Bank Account' : 'الحساب البنكي الرئيسي';
+      document.getElementById('accNumLabel').textContent = currentLang === 'en' ? 'Account Number:' : 'رقم الحساب:';
+      document.getElementById('accTypeLabel').textContent = currentLang === 'en' ? 'Account Type:' : 'نوع الحساب:';
+      document.getElementById('accBalLabel').textContent = currentLang === 'en' ? 'Balance:' : 'الرصيد:';
+      document.getElementById('latestTx').textContent = currentLang === 'en' ? 'Latest Transactions' : 'أحدث المعاملات';
+      document.getElementById('btnTransfer').textContent = currentLang === 'en' ? 'Transfer Money' : 'تحويل الأموال';
+      document.getElementById('btnView').textContent = currentLang === 'en' ? 'View Transactions' : 'عرض المعاملات';
+      document.getElementById('btnCreate').textContent = currentLang === 'en' ? 'Create New Account' : 'إنشاء حساب جديد';
+      document.getElementById('btnSettings').textContent = currentLang === 'en' ? 'Settings' : 'الإعدادات';
+    }
+
+    function toggleLanguage() {
+      currentLang = currentLang === 'en' ? 'ar' : 'en';
+      localStorage.setItem('lang', currentLang);
+      applyLanguage();
+    }
+
+    function toggleProfilePopup() {
+      const popup = document.getElementById('profilePopup');
+      popup.classList.toggle('show');
+    }
+
+    applyLanguage();
+  </script>
+</body>
+</html>

@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ejada - Account Overview</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f1f3fd;
+      margin: 0;
+      padding: 20px;
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+    .header {
+      font-size: 1.5rem;
+      font-weight: bold;
+      margin-bottom: 8px;
+    }
+    .email {
+      color: #555;
+      margin-bottom: 20px;
+    }
+    .card {
+      background-color: #fff;
+      border-radius: 10px;
+      padding: 15px;
+      margin-bottom: 15px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      position: relative;
+    }
+    .account-title {
+      font-weight: bold;
+      font-size: 1.1rem;
+      margin-bottom: 5px;
+    }
+    .detail-line {
+      margin-bottom: 4px;
+    }
+    .btn {
+      background-color: #2d89f0;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      padding: 8px 12px;
+      font-weight: bold;
+      cursor: pointer;
+      position: absolute;
+      bottom: 15px;
+      transition: background-color 0.3s ease;
+    }
+    .btn:hover {
+      background-color: #1a6ed1;
+    }
+    html[dir="rtl"] .btn {
+      left: 15px;
+      right: unset;
+    }
+    html[dir="ltr"] .btn {
+      right: 15px;
+      left: unset;
+    }
+    .details {
+      background-color: #eef3ff;
+      padding: 12px;
+      border-radius: 8px;
+      margin-top: 10px;
+      display: none;
+    }
+    .back-btn {
+      margin-top: 30px;
+      text-align: center;
+    }
+    .back-btn button {
+      background-color: #2d89f0;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 6px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .back-btn button:hover {
+      background-color: #1a6ed1;
+    }
+    body.dark-mode {
+      background-color: #121212;
+      color: #e0e0e0;
+    }
+    body.dark-mode .card {
+      background-color: #1e1e1e;
+    }
+    body.dark-mode .details {
+      background-color: #2c2c2c;
+    }
+    .lang-toggle {
+      position: fixed;
+      top: 20px;
+    }
+    .lang-toggle button {
+      padding: 6px 14px;
+      border: none;
+      border-radius: 6px;
+      background-color: #2d89f0;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="lang-toggle" id="langToggle">
+    <button onclick="toggleLanguage()" id="langBtn"> EN | AR</button>
+  </div>
+  <div class="header" data-en="Hello, Okba Ben 👋" data-ar="مرحبًا، عقبة بن 👋">Hello, Okba Ben 👋</div>
+  <div class="email">Okba.Ben@example.com</div>
+  <div id="accounts"></div>
+  <div class="back-btn">
+    <button onclick="window.location.href='Ejada Empty Accounts.html'" data-en="Return to Dashboard" data-ar="العودة إلى لوحة التحكم">Return to Dashboard</button>
+  </div>
+  <script>
+    const accountsData = [
+      {
+        title: { en: "Savings Account", ar: "حساب التوفير" },
+        number: "12345678",
+        balance: "$5,000.00",
+        status: { en: "Active", ar: "نشط" },
+        details: [
+          { en: "• Opened Date: 01/01/2022", ar: "• تاريخ الفتح: 01/01/2022" },
+          { en: "• Last Activity: 10/12/2023", ar: "• آخر نشاط: 10/12/2023" },
+          { en: "• Currency: USD", ar: "• العملة: USD" },
+          { en: "• IBAN: AE12 3456 7890 1234 5678", ar: "• آيبان: AE12 3456 7890 1234 5678" }
+        ]
+      },
+      {
+        title: { en: "Checking Account", ar: "حساب جاري" },
+        number: "87654321",
+        balance: "$1,200.00",
+        status: { en: "Active", ar: "نشط" },
+        details: [
+          { en: "• Opened Date: 06/04/2022", ar: "• تاريخ الفتح: 06/04/2022" },
+          { en: "• Last Activity: 09/12/2023", ar: "• آخر نشاط: 09/12/2023" },
+          { en: "• Currency: USD", ar: "• العملة: USD" },
+          { en: "• IBAN: AE98 7654 3210 9876 5432", ar: "• آيبان: AE98 7654 3210 9876 5432" }
+        ]
+      },
+      {
+        title: { en: "Business Account", ar: "حساب الأعمال" },
+        number: "33445566",
+        balance: "$15,600.00",
+        status: { en: "Inactive", ar: "غير نشط" },
+        details: [
+          { en: "• Opened Date: 03/08/2020", ar: "• تاريخ الفتح: 03/08/2020" },
+          { en: "• Last Activity: 05/01/2024", ar: "• آخر نشاط: 05/01/2024" },
+          { en: "• Currency: USD", ar: "• العملة: USD" },
+          { en: "• IBAN: AE23 3344 5566 7788 9900", ar: "• آيبان: AE23 3344 5566 7788 9900" }
+        ]
+      }
+    ];
+
+    function createAccountCard(account, lang) {
+      const card = document.createElement('div');
+      card.className = 'card';
+      card.innerHTML = `
+        <div class="account-title">${account.title[lang]}</div>
+        <div class="detail-line">${lang === 'ar' ? 'رقم الحساب' : 'Account Number'}: ${account.number}</div>
+        <div class="detail-line">${lang === 'ar' ? 'الرصيد' : 'Balance'}: ${account.balance}</div>
+        <div class="detail-line">${lang === 'ar' ? 'الحالة' : 'Status'}: ${account.status[lang]}</div>
+        <button class="btn" onclick="toggleDetails(this)">${lang === 'ar' ? 'عرض التفاصيل' : 'View Details'}</button>
+        <div class="details">
+          ${account.details.map(detail => `<div>${detail[lang]}</div>`).join('')}
+        </div>`;
+      return card;
+    }
+
+    function toggleDetails(button) {
+      const details = button.nextElementSibling;
+      const allDetails = document.querySelectorAll('.details');
+      allDetails.forEach(d => { if (d !== details) d.style.display = 'none'; });
+      details.style.display = details.style.display === 'block' ? 'none' : 'block';
+    }
+
+    function toggleLanguage() {
+      const currentLang = localStorage.getItem('language') || 'en';
+      const newLang = currentLang === 'en' ? 'ar' : 'en';
+      localStorage.setItem('language', newLang);
+      location.reload();
+    }
+
+    window.onload = () => {
+      const isDark = localStorage.getItem('darkMode') === 'true';
+      const lang = localStorage.getItem('language') || 'en';
+      if (isDark) document.body.classList.add('dark-mode');
+      document.documentElement.lang = lang;
+      document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
+
+      const langToggle = document.getElementById('langToggle');
+      langToggle.style.right = lang === 'ar' ? 'unset' : '20px';
+      langToggle.style.left = lang === 'ar' ? '20px' : 'unset';
+
+      document.querySelectorAll('[data-en][data-ar]').forEach(el => {
+        el.textContent = el.getAttribute(`data-${lang}`);
+      });
+
+      const container = document.getElementById('accounts');
+      accountsData.forEach(acc => container.appendChild(createAccountCard(acc, lang)));
+    };
+  </script>
+</body>
+</html>

@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ejada - Login</title>
+  <style>
+    :root {
+      --dark-bg: #0f1c2e;
+      --accent-blue: #2196f3;
+      --white: #ffffff;
+      --gray-light: #ccc;
+      --gray-dark: #444;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      min-height: 100vh;
+      background: linear-gradient(135deg, #0f1c2e, #1e3a5f);
+      color: var(--white);
+      position: relative;
+      overflow: hidden;
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    body::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle at 20% 20%, rgba(255,255,255,0.05), transparent),
+                  radial-gradient(circle at 80% 80%, rgba(255,255,255,0.05), transparent);
+      animation: floatBg 20s ease-in-out infinite;
+      z-index: -1;
+    }
+
+    @keyframes floatBg {
+      0%, 100% { transform: translate(0, 0); }
+      50% { transform: translate(10px, -10px); }
+    }
+
+    .container {
+      width: 100%;
+      max-width: 400px;
+      margin-top: 60px;
+      padding: 30px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 16px;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+      animation: fadeIn 1s ease forwards;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .logo {
+      display: block;
+      margin: 0 auto 20px;
+      width: 120px;
+      filter: brightness(0) invert(1);
+      animation: float 4s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    .subtitle {
+      font-size: 1.4rem;
+      font-weight: 600;
+      text-align: center;
+      margin-bottom: 5px;
+    }
+
+    .desc {
+      font-size: 0.95rem;
+      text-align: center;
+      color: #ccc;
+      margin-bottom: 30px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      margin-bottom: 20px;
+      position: relative;
+    }
+
+    input[type="text"], input[type="password"] {
+      padding: 12px;
+      border: 1px solid var(--gray-light);
+      border-radius: 8px;
+      font-size: 1rem;
+      width: 100%;
+      background-color: rgba(255, 255, 255, 0.1);
+      color: var(--white);
+    }
+
+    .toggle-password {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      cursor: pointer;
+      font-size: 1.2rem;
+      color: var(--accent-blue);
+      background: none;
+      border: none;
+      padding: 4px;
+    }
+
+    .toggle-password svg {
+      width: 20px;
+      height: 20px;
+      fill: var(--accent-blue);
+    }
+
+    .toggle-password.left {
+      left: 10px;
+    }
+
+    .toggle-password.right {
+      right: 10px;
+    }
+
+    .btn {
+      width: 100%;
+      padding: 12px;
+      background-color: var(--accent-blue);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background-color 0.3s ease, transform 0.3s ease;
+    }
+
+    .btn:hover {
+      background-color: #1976d2;
+      transform: scale(1.03);
+    }
+
+    .error-message {
+      color: #e53935;
+      font-size: 0.9rem;
+      margin-top: 10px;
+      text-align: center;
+      display: none;
+    }
+
+    .language-toggle {
+      position: absolute;
+      bottom: 20px;
+      left: 20px;
+      font-size: 0.95rem;
+      color: var(--accent-blue);
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="language-toggle" onclick="toggleLanguage()">EN | AR</div>
+  <div class="container">
+    <img src="image007.png" class="logo" alt="Ejada Logo">
+    <div class="subtitle" id="subtitle">Welcome to Ejada</div>
+    <div class="desc" id="desc">Please login to continue</div>
+    <form onsubmit="handleLogin(event)">
+      <div class="form-group">
+        <input type="text" id="username" placeholder="Username" required>
+      </div>
+      <div class="form-group">
+        <input type="password" id="password" placeholder="Password" required>
+        <button type="button" id="eyeToggle" class="toggle-password right" onclick="togglePassword()">
+          <svg id="eyeIcon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M12 5C7 5 2.7 8.1 1 12c1.7 3.9 6 7 11 7s9.3-3.1 11-7c-1.7-3.9-6-7-11-7zm0 12c-2.8 0-5-2.2-5-5s2.2-5 5-5 5 2.2 5 5-2.2 5-5 5z"/>
+          </svg>
+        </button>
+      </div>
+      <button type="submit" class="btn" id="loginBtn">Login</button>
+    </form>
+    <div class="error-message" id="error-msg">Invalid username or password</div>
+  </div>
+
+  <script>
+    let currentLang = localStorage.getItem('lang') || 'en';
+    let isPasswordVisible = false;
+
+    function togglePassword() {
+      const pwd = document.getElementById('password');
+      const eyeIcon = document.getElementById('eyeIcon');
+      isPasswordVisible = !isPasswordVisible;
+      pwd.type = isPasswordVisible ? 'text' : 'password';
+      eyeIcon.innerHTML = isPasswordVisible
+        ? '<path d="M1 1l22 22M17.94 17.94C16.13 19.22 14.13 20 12 20c-5 0-9.3-3.1-11-8 1.04-2.36 2.79-4.36 4.94-5.72M9.53 9.53A3.5 3.5 0 0114.47 14.5M3 3l18 18" />'
+        : '<path d="M12 5C7 5 2.7 8.1 1 12c1.7 3.9 6 7 11 7s9.3-3.1 11-7c-1.7-3.9-6-7-11-7zm0 12c-2.8 0-5-2.2-5-5s2.2-5 5-5 5 2.2 5 5-2.2 5-5 5z"/>';
+    }
+
+    function handleLogin(e) {
+      e.preventDefault();
+      const username = document.getElementById('username').value.trim();
+      const password = document.getElementById('password').value.trim();
+      if (username && password) {
+        window.location.href = "Ejada Empty Accounts.html";
+      } else {
+        document.getElementById('error-msg').style.display = 'block';
+      }
+    }
+
+    function toggleLanguage() {
+      currentLang = currentLang === 'en' ? 'ar' : 'en';
+      localStorage.setItem('lang', currentLang);
+      applyLanguage();
+    }
+
+    function applyLanguage() {
+      const subtitle = document.getElementById('subtitle');
+      const desc = document.getElementById('desc');
+      const loginBtn = document.getElementById('loginBtn');
+      const username = document.getElementById('username');
+      const password = document.getElementById('password');
+      const langToggle = document.querySelector('.language-toggle');
+      const eyeToggle = document.getElementById('eyeToggle');
+
+      if (currentLang === 'ar') {
+        document.documentElement.lang = 'ar';
+        document.documentElement.dir = 'rtl';
+        subtitle.textContent = 'مرحباً بك في إجادة';
+        desc.textContent = 'يرجى تسجيل الدخول للمتابعة';
+        loginBtn.textContent = 'تسجيل الدخول';
+        username.placeholder = 'اسم المستخدم';
+        password.placeholder = 'كلمة المرور';
+        langToggle.textContent = 'AR | EN';
+        eyeToggle.classList.remove('right');
+        eyeToggle.classList.add('left');
+      } else {
+        document.documentElement.lang = 'en';
+        document.documentElement.dir = 'ltr';
+        subtitle.textContent = 'Welcome to Ejada';
+        desc.textContent = 'Please login to continue';
+        loginBtn.textContent = 'Login';
+        username.placeholder = 'Username';
+        password.placeholder = 'Password';
+        langToggle.textContent = 'EN | AR';
+        eyeToggle.classList.remove('left');
+        eyeToggle.classList.add('right');
+      }
+    }
+
+    window.onload = function () {
+      currentLang = localStorage.getItem('lang') || 'en';
+      applyLanguage();
+    }
+  </script>
+</body>
+</html>
