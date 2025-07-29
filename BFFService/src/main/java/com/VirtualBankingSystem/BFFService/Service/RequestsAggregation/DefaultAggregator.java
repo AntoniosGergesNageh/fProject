@@ -5,6 +5,7 @@ import com.VirtualBankingSystem.BFFService.Client.TransactionServiceClient;
 import com.VirtualBankingSystem.BFFService.Client.UserServiceClient;
 import com.VirtualBankingSystem.BFFService.DTO.AccountResponseDTO;
 import com.VirtualBankingSystem.BFFService.DTO.TransactionResponseDTO;
+import com.VirtualBankingSystem.BFFService.DTO.UserProfileResponseDTO;
 import com.VirtualBankingSystem.BFFService.DTO.UserResponseDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -25,7 +26,17 @@ public class DefaultAggregator extends DataAggregator {
 
     @Override
     protected UserResponseDTO getUserProfile(UUID userId) {
-        return userServiceClient.getUserProfile(userId);
+        UserProfileResponseDTO profileDTO = userServiceClient.getUserProfile(userId);
+        // Convert UserProfileResponseDTO to UserResponseDTO
+        UserResponseDTO responseDTO = new UserResponseDTO();
+        responseDTO.setId(profileDTO.getId());
+        responseDTO.setFirstName(profileDTO.getFirstName());
+        responseDTO.setLastName(profileDTO.getLastName());
+        responseDTO.setEmail(profileDTO.getEmail());
+        responseDTO.setUsername(profileDTO.getUsername());
+        responseDTO.setCreatedAt(profileDTO.getCreatedAt());
+        // Other fields will be null or set later
+        return responseDTO;
     }
 
     @Override

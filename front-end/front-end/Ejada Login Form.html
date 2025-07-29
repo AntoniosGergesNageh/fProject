@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Ejada - Login</title>
+  <script src="js/api.js"></script>
   <style>
     :root {
       --dark-bg: #0f1c2e;
@@ -190,6 +191,10 @@
       <button type="submit" class="btn" id="loginBtn">Login</button>
     </form>
     <div class="error-message" id="error-msg">Invalid username or password</div>
+    
+    <div class="register-link" id="register-link" style="text-align: center; margin-top: 20px; color: #ccc; font-size: 0.9rem;">
+      Don't have an account? <a href="Ejada Register Page.html" style="color: var(--accent-blue); text-decoration: none; font-weight: 500;">Sign Up</a>
+    </div>
   </div>
 
   <script>
@@ -206,14 +211,37 @@
         : '<path d="M12 5C7 5 2.7 8.1 1 12c1.7 3.9 6 7 11 7s9.3-3.1 11-7c-1.7-3.9-6-7-11-7zm0 12c-2.8 0-5-2.2-5-5s2.2-5 5-5 5 2.2 5 5-2.2 5-5 5z"/>';
     }
 
-    function handleLogin(e) {
+    async function handleLogin(e) {
       e.preventDefault();
       const username = document.getElementById('username').value.trim();
       const password = document.getElementById('password').value.trim();
-      if (username && password) {
+      const errorMsg = document.getElementById('error-msg');
+      
+      if (!username || !password) {
+        errorMsg.textContent = currentLang === 'en' ? 'Please fill in all fields' : 'يرجى ملء جميع الحقول';
+        errorMsg.style.display = 'block';
+        return;
+      }
+      
+      try {
+        errorMsg.style.display = 'none';
+        // Use the API service to login
+        const response = await ApiService.login(username, password);
+        
+        // Save user session
+        SessionManager.saveUserSession({
+          userId: response.userId,
+          username: response.username
+        });
+        
+        // Redirect to accounts page
         window.location.href = "Ejada Empty Accounts.html";
-      } else {
-        document.getElementById('error-msg').style.display = 'block';
+      } catch (error) {
+        // Display error message
+        errorMsg.textContent = currentLang === 'en' ? 
+          'Invalid username or password' : 
+          'اسم المستخدم أو كلمة المرور غير صحيحة';
+        errorMsg.style.display = 'block';
       }
     }
 
@@ -231,6 +259,7 @@
       const password = document.getElementById('password');
       const langToggle = document.querySelector('.language-toggle');
       const eyeToggle = document.getElementById('eyeToggle');
+      const registerLink = document.getElementById('register-link');
 
       if (currentLang === 'ar') {
         document.documentElement.lang = 'ar';
@@ -241,6 +270,7 @@
         username.placeholder = 'اسم المستخدم';
         password.placeholder = 'كلمة المرور';
         langToggle.textContent = 'AR | EN';
+        registerLink.innerHTML = 'ليس لديك حساب؟ <a href="Ejada Register Page.html" style="color: var(--accent-blue); text-decoration: none; font-weight: 500;">إنشاء حساب</a>';
         eyeToggle.classList.remove('right');
         eyeToggle.classList.add('left');
       } else {
@@ -252,6 +282,7 @@
         username.placeholder = 'Username';
         password.placeholder = 'Password';
         langToggle.textContent = 'EN | AR';
+        registerLink.innerHTML = 'Don\'t have an account? <a href="Ejada Register Page.html" style="color: var(--accent-blue); text-decoration: none; font-weight: 500;">Sign Up</a>';
         eyeToggle.classList.remove('left');
         eyeToggle.classList.add('right');
       }

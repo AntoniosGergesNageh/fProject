@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Ejada - Transfer Money</title>
+  <script src="js/api.js"></script>
   <style>
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -185,21 +186,93 @@
   </div>
 
   <script>
+    // Check if user is logged in
+    if (!SessionManager.redirectIfNotLoggedIn()) {
+      throw new Error('Not logged in');
+    }
+    
+    const userSession = SessionManager.getUserSession();
     const form = document.getElementById('transferForm');
     const errorMsg = document.getElementById('error-msg');
+    const fromAccountSelect = document.getElementById('from-account');
+    
+    // Load user accounts
+    let userAccounts = [];
+    
+    async function loadUserAccounts() {
+      try {
+        userAccounts = await ApiService.getUserAccounts(userSession.userId);
+        
+        // Clear and populate account dropdown
+        fromAccountSelect.innerHTML = '';
+        
+        if (userAccounts && userAccounts.length > 0) {
+          userAccounts.forEach(account => {
+            const option = document.createElement('option');
+            option.value = account.id; // Use the actual account ID
+            option.textContent = `${account.accountType} - ${account.accountNumber} (${account.balance})`;
+            fromAccountSelect.appendChild(option);
+          });
+        } else {
+          const option = document.createElement('option');
+          option.value = '';
+          option.textContent = currentLang === 'en' ? 
+            'No accounts available' : 
+            'لا توجد حسابات متاحة';
+          fromAccountSelect.appendChild(option);
+          
+          // Disable form if no accounts
+          document.getElementById('to-id').disabled = true;
+          document.getElementById('amount').disabled = true;
+          document.getElementById('description').disabled = true;
+          document.getElementById('submitBtn').disabled = true;
+        }
+      } catch (error) {
+        console.error('Error loading accounts:', error);
+        errorMsg.textContent = currentLang === 'en' ? 
+          'Error loading accounts. Please try again.' : 
+          'خطأ في تحميل الحسابات. يرجى المحاولة مرة أخرى.';
+        errorMsg.style.display = 'block';
+      }
+    }
 
-    form.addEventListener('submit', function(event) {
+    form.addEventListener('submit', async function(event) {
       event.preventDefault();
 
-      const toId = document.getElementById('to-id').value.trim();
+      const fromAccountId = document.getElementById('from-account').value;
+      const toAccountId = document.getElementById('to-id').value.trim();
       const amount = parseFloat(document.getElementById('amount').value.trim());
+      const description = document.getElementById('description').value.trim();
 
-      if (toId !== '' && !isNaN(amount) && amount > 0) {
+      if (!fromAccountId || !toAccountId || isNaN(amount) || amount <= 0) {
+        errorMsg.style.display = 'block';
+        return;
+      }
+      
+      try {
+        // Store transfer details in session for confirmation page
+        const transferDetails = {
+          fromAccountId,
+          toAccountId,
+          amount,
+          description
+        };
+        
+        localStorage.setItem('pendingTransfer', JSON.stringify(transferDetails));
+        
+        // Navigate to confirmation page
         window.location.href = 'Transfer Confirmation Page.html';
-      } else {
+      } catch (error) {
+        console.error('Error preparing transfer:', error);
+        errorMsg.textContent = currentLang === 'en' ? 
+          'Error preparing transfer. Please try again.' : 
+          'خطأ في إعداد التحويل. يرجى المحاولة مرة أخرى.';
         errorMsg.style.display = 'block';
       }
     });
+    
+    // Load accounts when page loads
+    loadUserAccounts();
 
     const translations = {
       en: {

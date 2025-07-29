@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Ejada - Dashboard</title>
+  <script src="js/api.js"></script>
   <style>
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -258,6 +259,72 @@
   </div>
 
   <script>
+    // Check if user is logged in
+    if (!SessionManager.redirectIfNotLoggedIn()) {
+      // If not logged in, the redirect happens in the SessionManager
+      // No need to continue execution
+      throw new Error('Not logged in');
+    }
+
+    const userSession = SessionManager.getUserSession();
+    let userAccounts = [];
+    let userProfile = {};
+
+    // Load user data and accounts
+    async function loadUserData() {
+      try {
+        // Get user profile information
+        userProfile = await ApiService.getUserProfile(userSession.userId);
+        
+        // Update profile display
+        const fullName = userProfile.firstName && userProfile.lastName ? 
+          `${userProfile.firstName} ${userProfile.lastName}` : 
+          userProfile.firstName || userProfile.lastName || userSession.username;
+        
+        document.querySelector('#profilePopup .avatar').textContent = fullName ? fullName[0].toUpperCase() : '👤';
+        document.querySelector('#profilePopup p:nth-child(2) strong').textContent = fullName;
+        document.querySelector('#profilePopup p:nth-child(3)').textContent = userProfile.email || '';
+        
+        // Update greeting
+        const firstName = userProfile.firstName || userSession.username;
+        document.getElementById('greeting').textContent = `${currentLang === 'en' ? 'Hello' : 'مرحباً'}, ${firstName} 👋`;
+        
+        // Get user accounts
+        userAccounts = await ApiService.getUserAccounts(userSession.userId);
+        
+        // Display account information if there are accounts
+        if (userAccounts && userAccounts.length > 0) {
+          displayAccountInfo(userAccounts[0]);
+        } else {
+          // Show empty state
+          document.querySelector('.card:first-of-type').innerHTML = `
+            <h3>${currentLang === 'en' ? 'No Accounts Yet' : 'لا توجد حسابات بعد'}</h3>
+            <p>${currentLang === 'en' ? 'Create your first account to get started!' : 'قم بإنشاء حسابك الأول للبدء!'}</p>
+          `;
+        }
+      } catch (error) {
+        console.error('Error loading user data:', error);
+      }
+    }
+
+    // Display account information
+    function displayAccountInfo(account) {
+      document.getElementById('accTitle').textContent = 
+        `${currentLang === 'en' ? account.accountType : getArabicAccountType(account.accountType)} ${currentLang === 'en' ? 'Account' : 'حساب'}`;
+      document.getElementById('account-number').textContent = account.accountNumber;
+      document.getElementById('account-type').textContent = 
+        currentLang === 'en' ? account.accountType : getArabicAccountType(account.accountType);
+      document.getElementById('account-balance').textContent = `$${account.balance.toFixed(2)}`;
+    }
+    
+    function getArabicAccountType(type) {
+      switch(type.toLowerCase()) {
+        case 'checking': return 'جاري';
+        case 'savings': return 'توفير';
+        default: return type;
+      }
+    }
+
     const toggle = document.getElementById('toggleDarkMode');
     const isDark = localStorage.getItem('darkMode') === 'true';
     if (isDark) document.body.classList.add('dark-mode');
@@ -272,8 +339,9 @@
     let currentLang = localStorage.getItem('lang') || 'en';
     function applyLanguage() {
       document.getElementById('langToggle').textContent = currentLang === 'en' ? 'AR' : 'EN';
-      document.getElementById('greeting').textContent = currentLang === 'en' ? 'Hello, Okba 👋' : 'مرحباً، عقبة 👋';
-      document.getElementById('accTitle').textContent = currentLang === 'en' ? 'Primary Bank Account' : 'الحساب البنكي الرئيسي';
+      
+      // The greeting is now handled by loadUserData()
+      
       document.getElementById('accNumLabel').textContent = currentLang === 'en' ? 'Account Number:' : 'رقم الحساب:';
       document.getElementById('accTypeLabel').textContent = currentLang === 'en' ? 'Account Type:' : 'نوع الحساب:';
       document.getElementById('accBalLabel').textContent = currentLang === 'en' ? 'Balance:' : 'الرصيد:';
@@ -282,6 +350,11 @@
       document.getElementById('btnView').textContent = currentLang === 'en' ? 'View Transactions' : 'عرض المعاملات';
       document.getElementById('btnCreate').textContent = currentLang === 'en' ? 'Create New Account' : 'إنشاء حساب جديد';
       document.getElementById('btnSettings').textContent = currentLang === 'en' ? 'Settings' : 'الإعدادات';
+      
+      // If we already loaded user data, refresh the displayed account info
+      if (userAccounts && userAccounts.length > 0) {
+        displayAccountInfo(userAccounts[0]);
+      }
     }
 
     function toggleLanguage() {
@@ -295,7 +368,9 @@
       popup.classList.toggle('show');
     }
 
+    // Initialize
     applyLanguage();
+    loadUserData();
   </script>
 </body>
 </html>

@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Create New Account</title>
+  <script src="js/api.js"></script>
   <style>
     body {
       font-family: 'Segoe UI', sans-serif;
@@ -152,10 +153,16 @@
   </div>
 
   <script>
+    // Check if user is logged in
+    if (!SessionManager.redirectIfNotLoggedIn()) {
+      throw new Error('Not logged in');
+    }
+    
+    const userSession = SessionManager.getUserSession();
     const form = document.getElementById('accountForm');
     const message = document.getElementById('message');
 
-    form.addEventListener('submit', function(e) {
+    form.addEventListener('submit', async function(e) {
       e.preventDefault();
 
       const fullName = document.getElementById('fullname').value.trim();
@@ -170,8 +177,38 @@
         return;
       }
 
-      message.textContent = currentLang === 'en' ? 'Account created successfully!' : 'تم إنشاء الحساب بنجاح!';
-      message.className = 'message success';
+      try {
+        // Prepare account data
+        const accountData = {
+          userId: userSession.userId,
+          accountType: type,
+          initialDeposit: amount,
+          holderName: fullName,
+          email: email,
+          phoneNumber: phone
+        };
+
+        // Call API to create account
+        const response = await ApiService.createAccount(accountData);
+        
+        message.textContent = currentLang === 'en' ? 'Account created successfully!' : 'تم إنشاء الحساب بنجاح!';
+        message.className = 'message success';
+        
+        // Clear form after successful creation
+        form.reset();
+        
+        // Redirect back to accounts page after a short delay
+        setTimeout(() => {
+          window.location.href = 'Ejada Empty Accounts.html';
+        }, 2000);
+        
+      } catch (error) {
+        console.error('Error creating account:', error);
+        message.textContent = currentLang === 'en' ? 
+          'Error creating account. Please try again.' : 
+          'حدث خطأ أثناء إنشاء الحساب. يرجى المحاولة مرة أخرى.';
+        message.className = 'message error';
+      }
     });
 
     const toggle = document.getElementById('toggleDarkMode');
